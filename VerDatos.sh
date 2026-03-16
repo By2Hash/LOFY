@@ -1,28 +1,31 @@
 #!/bin/bash
 
-SUBOPCION=$(whiptail --title "LOFY - Ver Datos" --menu "Selecciona el estado del álbum:" 15 60 4 \
-"1" "Albums Terminados" \
-"2" "Albums En Progreso" \
-"3" "Albums Pendientes" \
-"4" "Volver" 3>&1 1>&2 2>&3)
-
+if [ -f lista_albums.txt ]; then
+    whiptail --title "Mis Álbumes" --textbox lista_albums.txt 15 60
+else
+    whiptail --msgbox "Aún no has ingresado ningún álbum." 8 45
+fi
 
 case $SUBOPCION in 
     1)
-        whiptail --msgbox "Has seleccionado: Albums Terminados" 8 45
-        # Aquí iría tu código para manejar álbumes terminados
+        # Mostramos el contenido completo del archivo txt
+        whiptail --title "Lista de Álbumes" --textbox albums.txt 15 60
         ;;
     2)
-        whiptail --msgbox "Has seleccionado: Albums En Progreso" 8 45
-        # Aquí iría tu código para álbumes en progreso
+        # Ejemplo rápido de filtrado usando grep
+        CAT=$(whiptail --menu "Filtrar por:" 15 60 3 \
+        "TERMINADO" "Solo completados" \
+        "EN PROGRESO" "Solo en curso" \
+        "PENDIENTE" "Solo pendientes" 3>&1 1>&2 2>&3)
+        
+        if [ ! -z "$CAT" ]; then
+            # Filtramos el archivo y lo mandamos a un archivo temporal para mostrarlo
+            grep "$CAT" albums.txt > temp.txt
+            whiptail --title "Álbumes $CAT" --textbox temp.txt 15 60
+            rm temp.txt
+        fi
         ;;
-    3)
-        whiptail --msgbox "Has seleccionado: Albums Pendientes" 8 45
-        # Aquí iría tu código para álbumes pendientes
-        ;;
-    4|"")
-        # Si elige Volver o presiona Escape, simplemente termina este script
-        # y regresa al bucle del menú principal.
-        return 0 
+    3|"")
+        return 0
         ;;
 esac

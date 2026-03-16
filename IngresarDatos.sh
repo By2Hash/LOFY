@@ -1,28 +1,39 @@
 #!/bin/bash
 
-# Generamos el menú secundario
+# 1. El usuario elige la categoría
 SUB_OPCION=$(whiptail --title "LOFY - Ingresar Datos" --menu "Selecciona el estado del álbum:" 15 60 4 \
 "1" "Albums Terminados" \
 "2" "Albums En Progreso" \
 "3" "Albums Pendientes" \
 "4" "Volver" 3>&1 1>&2 2>&3)
 
+# 2. Según la categoría, pedimos el nombre y guardamos
 case $SUB_OPCION in 
     1)
-        whiptail --msgbox "Has seleccionado: Albums Terminados" 8 45
-        # Aquí iría tu código para manejar álbumes terminados
+        # Pedimos el nombre del álbum
+        NOMBRE=$(whiptail --title "Albums Terminados" --inputbox "Escribe el nombre del álbum:" 8 45 3>&1 1>&2 2>&3)
+        
+        # Si el usuario no presionó Cancelar (el nombre no está vacío)
+        if [ ! -z "$NOMBRE" ]; then
+            echo "TERMINADO: $NOMBRE" >> lista_albums.txt
+            whiptail --msgbox "Álbum '$NOMBRE' guardado con éxito." 8 45
+        fi
         ;;
     2)
-        whiptail --msgbox "Has seleccionado: Albums En Progreso" 8 45
-        # Aquí iría tu código para álbumes en progreso
+        NOMBRE=$(whiptail --title "Albums En Progreso" --inputbox "Escribe el nombre del álbum:" 8 45 3>&1 1>&2 2>&3)
+        if [ ! -z "$NOMBRE" ]; then
+            echo "EN PROGRESO: $NOMBRE" >> lista_albums.txt
+            whiptail --msgbox "Álbum '$NOMBRE' guardado." 8 45
+        fi
         ;;
     3)
-        whiptail --msgbox "Has seleccionado: Albums Pendientes" 8 45
-        # Aquí iría tu código para álbumes pendientes
+        NOMBRE=$(whiptail --title "Albums Pendientes" --inputbox "Escribe el nombre del álbum:" 8 45 3>&1 1>&2 2>&3)
+        if [ ! -z "$NOMBRE" ]; then
+            echo "PENDIENTE: $NOMBRE" >> lista_albums.txt
+            whiptail --msgbox "Álbum '$NOMBRE' guardado." 8 45
+        fi
         ;;
     4|"")
-        # Si elige Volver o presiona Escape, simplemente termina este script
-        # y regresa al bucle del menú principal.
-        return 0 
+        return 0
         ;;
 esac
